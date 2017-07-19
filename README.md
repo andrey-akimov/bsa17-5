@@ -1,7 +1,5 @@
-1. app/index.html
+1. npm i
 
-2. npm i
+2. run server
 
-3. run server
-
-4. index.html
+3. index.html
