@@ -3,7 +3,6 @@ const messageService = require('../../services/message');
 
 router.get('/all', (req, res, next) => {
 	try {
-		res.header("Access-Control-Allow-Origin", "*");
 		res.data = messageService.allMessages();
 		res.json(res.data);
 	} catch (error) {
@@ -14,7 +13,6 @@ router.get('/all', (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
 	try {
-		res.header("Access-Control-Allow-Origin", "*");
 		res.data = messageService.findMessage(Number(req.params.id));
 		res.json(res.data);
 	} catch (error) {
@@ -25,7 +23,6 @@ router.get('/:id', (req, res, next) => {
 
 router.post("/", (req, res, next) => {
 	try {
-		res.header("Access-Control-Allow-Origin", "*");
 		let user = messageService.newMessage(req.body);
 		// FIFO control
 		console.log(messageService.allMessages().length);
