@@ -1,3 +1,7 @@
+window.onload = function(){
+	$('#modal1').modal('open');
+};
+
 (function(){
 
 	// let request = new XMLHttpRequest();
@@ -39,11 +43,8 @@
 
 	// Add new user
 	function newUser(){
-
-		let fName = prompt('name', 'user');
-		let alias = prompt('alias', 'alias');
-		// let fName = nameInp.val();
-		// let alias = aliasInp.val();
+		let fName = nameInp.val();
+		let alias = aliasInp.val();
 		let params = {
 			name: fName,
 			alias: alias
@@ -63,12 +64,11 @@
 
 	}
 
-	// $('#modal-btn').on('click', newUser);
-
-	window.onload = function(){
-		// $('#modal1').modal('open');
-		newUser();
-	};
+	$('#modal-btn').on('click', function(){
+		if (nameInp.val() !== '' && aliasInp.val() !== '') {
+			newUser();
+		}
+	});
 
 	function getAlias(message) {
 		let exp = message.match(/@([A-Z0-9])\w+/im);
@@ -78,28 +78,32 @@
 
 	// Post new message
 	function newMessage () {
-		let message = messageInp.val();
-		receiver = getAlias(message);
-		
-		if(message != ''){
-			let params = {
-				sender: user.alias,
-				receiver: receiver || '',
-				text: message
-			};
+		if (user != undefined) {
+			let message = messageInp.val();
+			receiver = getAlias(message);
+			
+			if(message != ''){
+				let params = {
+					sender: user.alias,
+					receiver: receiver || '',
+					text: message
+				};
 
-			$.ajax({
-				url         : 'http://localhost:1428/api/message/',
-				type        : 'POST',
-				ContentType : 'application/json',
-				data        : params
-			}).done(function(response){
-				// console.log(response.sender);
-			}).fail(function(jqXHR, textStatus, errorThrown){
-				console.log(`Error: request fail`);
-			});
+				$.ajax({
+					url         : 'http://localhost:1428/api/message/',
+					type        : 'POST',
+					ContentType : 'application/json',
+					data        : params
+				}).done(function(response){
+					// console.log(response.sender);
+				}).fail(function(jqXHR, textStatus, errorThrown){
+					console.log(`Error: request fail`);
+				});
 
-			messageInp.val('');
+				messageInp.val('');
+			}
+		} else {
+			$('#modal1').modal('open');
 		}
 
 	}
@@ -118,8 +122,8 @@
 		}).done(function(response){
 			users = response;
 			response.forEach(function(user) {
-				let cutName = (user.name.length > 8) ? (user.name.substr(0, 8) + '...') : user.name;
-				let cutAlias = (user.alias.length > 8) ? (user.alias.substr(0, 8) + '...') : user.alias;
+				let cutName = (user.name.length > 10) ? (user.name.substr(0, 7) + '...') : user.name;
+				let cutAlias = (user.alias.length > 10) ? (user.alias.substr(0, 7) + '...') : user.alias;
 				
 				// let userList = document.getElementById('user-list');
 				// let listItem = document.createElement('li');
@@ -146,42 +150,47 @@
 
 	// Get and render messages list
 	function getHistory () {
-		chat.empty();
+		if (user != undefined) {
+			chat.empty();
 
-		$.ajax({
-			url         : 'http://localhost:1428/api/message/all',
-			type        : 'GET',
-			ContentType : 'application/json'
-		}).done(function(response){
-			response.forEach(function(message) {
-				for (let i = 0; i < users.length; i++) {
-					var userName = (users[i].alias == message.sender) ? users[i].name : 'anonymous';
-				}
-				if(getAlias(message.text) == user.alias){
-					chat.append(
-						`<div class="message to-you">
-							<div class="row">
-								<div class="message__name left">${userName} (@${message.sender})</div>
-								<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
-							</div>
-							<div class="row message__text">${message.text}</div>
-						</div>`
-					);
-				} else {
-					chat.append(
-						`<div class="message">
-							<div class="row">
-								<div class="message__name left">${userName} (@${message.sender})</div>
-								<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
-							</div>
-							<div class="row message__text">${message.text}</div>
-						</div>`
-					);
-				}
+			$.ajax({
+				url         : 'http://localhost:1428/api/message/all',
+				type        : 'GET',
+				ContentType : 'application/json'
+			}).done(function(response){
+				response.forEach(function(message) {
+					for (let i = 0; i < users.length; i++) {
+						var userName;
+						if (users[i].alias == message.sender) {
+							userName = users[i].name;
+						}
+					}
+					if(getAlias(message.text) == user.alias){
+						chat.append(
+							`<div class="message to-you">
+								<div class="row">
+									<div class="message__name left">${userName} (@${message.sender})</div>
+									<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
+								</div>
+								<div class="row message__text">${message.text}</div>
+							</div>`
+						);
+					} else {
+						chat.append(
+							`<div class="message">
+								<div class="row">
+									<div class="message__name left">${userName} (@${message.sender})</div>
+									<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
+								</div>
+								<div class="row message__text">${message.text}</div>
+							</div>`
+						);
+					}
+				});
+			}).fail(function(jqXHR, textStatus, errorThrown){
+				console.log(`Error: request fail`);
 			});
-		}).fail(function(jqXHR, textStatus, errorThrown){
-			console.log(`Error: request fail`);
-		});
+		}
 
 	}
 
