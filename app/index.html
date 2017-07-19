@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+	<!-- begin wrapper -->
+	<div class="wrapper">
+
+		<!-- begin header-nav -->
+	  <nav class="nav">
+	    <div class="nav-wrapper">
+	      <a href="#" class="brand-logo">Chat</a>
+	      <ul id="nav-mobile" class="right hide-on-med-and-down">
+	        <li><a id="welcome" href="#"></a></li>
+	      </ul>
+	    </div>
+  	</nav>
+		<!-- end header-nav -->
+		
+		<div class="aligner">
+			
+			<!-- begin sidebar -->
+	  	<aside class="sidebar">
+				<ul class="user-list" id="user-list">
+<!-- 					<li class="user online">
+						<span class="user__name">Jonh</span>
+						<span class="user__alias">alias</span>
+						<span class="user__status">online</span>
+					</li>
+					<li class="user offline">
+						<span class="user__name">Ivan</span>
+						<span class="user__alias">alias</span>
+						<span class="user__status">offline</span>
+					</li>
+					<li class="user just">
+						<span class="user__name">Sancho</span>
+						<span class="user__alias">alias</span>
+						<span class="user__status">just appeared</span>
+					</li> -->
+				</ul>
+	  	</aside><!-- end sidebar -->
+
+			<!-- begin messegas -->
+		  <div class="main">
+		  	<div class="chat">
+		  		<!-- <div class="message">
+		  			<div class="row">
+		  				<div class="message__name left">Andrey</div>
+		  				<div class="message__time right">12:10</div>
+		  			</div>
+		  			<div class="row message__text">
+		  				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia rerum magni voluptates labore consectetur enim saepe harum reiciendis, eaque numquam ullam unde, laborum in mollitia voluptas a blanditiis impedit. Fugit.
+		  			</div>
+		  		</div>
+		  		<div class="message">
+		  			<div class="row">
+		  				<div class="message__name left">Andrey</div>
+		  				<div class="message__time right">12:10</div>
+		  			</div>
+		  			<div class="row message__text">
+		  				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia rerum magni voluptates labore consectetur enim saepe harum reiciendis, eaque numquam ullam unde, laborum in mollitia voluptas a blanditiis impedit. Fugit.
+		  			</div>
+		  		</div>
+		  		<div class="message">
+		  			<div class="row">
+		  				<div class="message__name left">Andrey</div>
+		  				<div class="message__time right">12:10</div>
+		  			</div>
+		  			<div class="row message__text">
+		  				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia rerum magni voluptates labore consectetur enim saepe harum reiciendis, eaque numquam ullam unde, laborum in mollitia voluptas a blanditiis impedit. Fugit.
+		  			</div>
+		  		</div>
+		  		<div class="message">
+		  			<div class="row">
+		  				<div class="message__name left">Andrey</div>
+		  				<div class="message__time right">12:10</div>
+		  			</div>
+		  			<div class="row message__text">
+		  				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia rerum magni voluptates labore consectetur enim saepe harum reiciendis, eaque numquam ullam unde, laborum in mollitia voluptas a blanditiis impedit. Fugit.
+		  			</div>
+		  		</div>
+		  		<div class="message">
+		  			<div class="row">
+		  				<div class="message__name left">Andrey</div>
+		  				<div class="message__time right">12:10</div>
+		  			</div>
+		  			<div class="row message__text">
+		  				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia rerum magni voluptates labore consectetur enim saepe harum reiciendis, eaque numquam ullam unde, laborum in mollitia voluptas a blanditiis impedit. Fugit.
+		  			</div>
+		  		</div> -->
+		  	</div>
+
+		  		<!-- begin sender-messages -->
+		  	  <form class="col s12 message-form">
+		  	    <div class="row">
+		  	      <div class="input-field col s12">
+		  	        <textarea id="textarea1" class="materialize-textarea"></textarea>
+		  	        <label for="textarea1">Your text</label>
+		  	  			<a type="submit" id="send" class="waves-effect waves-light btn right">send</a>
+		  	      </div>
+		  	    </div>
+		  	  </form><!-- end sender-messages -->
+
+		  </div><!-- end messegas -->
+		  
+		</div>
+
+	</div><!-- end wrapper -->
+
+	  <!-- Modal Structure -->
+	  <div id="modal1" class="modal">
+	    <div class="modal-content">
+	      <div class="row">
+	        <form class="col s12" id="login" >
+	          <div class="row">
+	            <div class="input-field col s6">
+	              <input id="first_name" type="text" required>
+	              <label for="first_name">First Name</label>
+	            </div>
+	            <div class="input-field col s6">
+	              <input id="alias" type="text" required>
+	              <label for="alias">Alias</label>
+	            </div>
+	          </div>
+				    <div class="modal-footer">
+				      <button id="modal-btn" class="modal-action modal-close waves-effect waves-green btn-flat" type="submit">Login</button>
+				    </div>
+	        </form>
+	      </div>
+	    </div>
+	  </div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
