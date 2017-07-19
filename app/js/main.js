@@ -4,68 +4,43 @@ window.onload = function(){
 
 (function(){
 
-	// let request = new XMLHttpRequest();
-
-	// function newUser(e){
-	// 	let fName = document.getElementById('first_name').value;
-	// 	let alias = document.getElementById('alias').value;
-	// 	let params = {
-	// 		name: fName,
-	// 		alias: alias
-	// 	};
-	// 	let jsonData = JSON.stringify(params);
-	// 	console.log(jsonData);
-	// 	request.open('POST', 'http://localhost:1428/api/user/', true);
-	// 	request.setRequestHeader('Content-Type', 'application/json');
-	// 	request.send(jsonData);
-	// 	request.onreadystatechange = function(){
-	// 		if (this.readyState == 4) {
-	// 			console.log(request.responseText);
-	// 		}
-	// 		if (this.status != 200) {
-	// 			console.log(`Error: ${(this.status ? this.statusText : 'request fail')}`);
-	// 		}
-	// 	}
-	// }
-	
-	// document.getElementById('login').addEventListener('submit', newUser);
-
-	let nameInp = $('#first_name');
-	let aliasInp = $('#alias');
-	let messageInp = $('#textarea1');
-	
-	let userList = $('.user-list');
-	let chat = $('.chat');
-
+	let modalBtn = document.getElementById('modal-btn');
+	let nameInp = document.getElementById('first_name');
+	let aliasInp = document.getElementById('alias');
+	let welcome = document.getElementById('welcome');
+	let messageInp = document.getElementById('textarea1');
+	let sendBtn = document.getElementById('send');
+	let userList = document.getElementById('user-list');
+	let chat = document.getElementById('chat');
 	let user;
+	let fName;
+	let alias;
 	let receiver;
 	let users = [];
+	
+	let request = new XMLHttpRequest();
 
-	// Add new user
 	function newUser(){
-		let fName = nameInp.val();
-		let alias = aliasInp.val();
 		let params = {
 			name: fName,
 			alias: alias
 		};
-
-		$.ajax({
-			url         : 'http://localhost:1428/api/user/',
-			type        : 'POST',
-			ContentType : 'application/json',
-			data        : params
-		}).done(function(response){
-			user = response || 'user';
-			$('#welcome').text(`Welcome ${user.name}`);
-		}).fail(function(jqXHR, textStatus, errorThrown){
-			console.log(`Error: request fail`);
-		});
-
+		let jsonData = JSON.stringify(params);
+		request.open('POST', 'http://localhost:1428/api/user/', true);
+		request.setRequestHeader('Content-Type', 'application/json');
+		request.send(jsonData);
+		request.onreadystatechange = function(){
+			if (this.readyState == 4) {
+				user = JSON.parse(request.responseText) || 'user';
+				welcome.innerHTML = `Welcome ${user.name}`;
+			}
+		}
 	}
 
-	$('#modal-btn').on('click', function(){
-		if (nameInp.val() !== '' && aliasInp.val() !== '') {
+	modalBtn.addEventListener('click', function(){
+		if (nameInp.value !== '' && aliasInp.value !== '') {
+			fName = nameInp.value;
+			alias = aliasInp.value;
 			newUser();
 		}
 	});
@@ -75,32 +50,27 @@ window.onload = function(){
 		return (exp != null && exp[0].slice(1));
 	}
 
-
-	// Post new message
 	function newMessage () {
 		if (user != undefined) {
-			let message = messageInp.val();
+			let message = messageInp.value;
 			receiver = getAlias(message);
 			
-			if(message != ''){
+			if (message != '') {
 				let params = {
 					sender: user.alias,
 					receiver: receiver || '',
 					text: message
 				};
-
-				$.ajax({
-					url         : 'http://localhost:1428/api/message/',
-					type        : 'POST',
-					ContentType : 'application/json',
-					data        : params
-				}).done(function(response){
-					// console.log(response.sender);
-				}).fail(function(jqXHR, textStatus, errorThrown){
-					console.log(`Error: request fail`);
-				});
-
-				messageInp.val('');
+				let jsonData = JSON.stringify(params);
+				request.open('POST', 'http://localhost:1428/api/message/', true);
+				request.setRequestHeader('Content-Type', 'application/json');
+				request.send(jsonData);
+				request.onreadystatechange = function(){
+					if (this.readyState == 4) {
+						console.log(request.responseText);
+					}
+				}
+				messageInp.value = '';
 			}
 		} else {
 			$('#modal1').modal('open');
@@ -108,95 +78,112 @@ window.onload = function(){
 
 	}
 
-	$('#send').on('click', newMessage);
+	sendBtn.addEventListener('click', newMessage);
 
-	
-	// Get and render users list
 	function getUsers () {
-		userList.empty();
+		
+		request.open('GET', 'http://localhost:1428/api/user/all', true);
+		request.setRequestHeader('Content-Type', 'application/json');
+		request.send();
+		request.onreadystatechange = function(){
 
-		$.ajax({
-			url         : 'http://localhost:1428/api/user/all',
-			type        : 'GET',
-			ContentType : 'application/json'
-		}).done(function(response){
-			users = response;
-			response.forEach(function(user) {
-				let cutName = (user.name.length > 10) ? (user.name.substr(0, 7) + '...') : user.name;
-				let cutAlias = (user.alias.length > 10) ? (user.alias.substr(0, 7) + '...') : user.alias;
-				
-				// let userList = document.getElementById('user-list');
-				// let listItem = document.createElement('li');
-				// listItem.className = 'user online';
-				// userList.appendChild(listItem);
-				// let span = document.createElement('li');
-				// listItem.appendChild(span);
-				// span.className = 'user__name';
-				// span.innerHTML = cutName;
+			if (this.readyState == 4) {
+				userList.innerHTML = '';
+				users = JSON.parse(request.responseText);
+				users.forEach(function(user) {
+					let cutName = (user.name.length > 10) ? (user.name.substr(0, 7) + '...') : user.name;
+					let cutAlias = (user.alias.length > 10) ? (user.alias.substr(0, 7) + '...') : user.alias;
+					
+					let listItem = document.createElement('li');
+					listItem.className = 'user online';
+					userList.appendChild(listItem);
+					let spanName = document.createElement('span');
+					spanName.className = 'user__name';
+					spanName.innerHTML = cutName;
+					listItem.appendChild(spanName);
+					let spanAlias = document.createElement('span');
+					spanAlias.className = 'user__alias';
+					listItem.appendChild(spanAlias);
+					spanAlias.innerHTML = `(@${cutAlias})`;
 
-				userList.append(
-					`<li class="user online">
-						<span class="user__name">${cutName}</span>
-						<span class="user__alias">(@${cutAlias})</span>
-					</li>`
-				);
-			});
-		}).fail(function(jqXHR, textStatus, errorThrown){
-			console.log(`Error: request fail`);
-		});
+				});
+			}
+
+		}
 
 	}
-
-
-	// Get and render messages list
+	
 	function getHistory () {
 		if (user != undefined) {
-			chat.empty();
+		
+			request.open('GET', 'http://localhost:1428/api/message/all', true);
+			request.setRequestHeader('Content-Type', 'application/json');
+			request.send();
+			request.onreadystatechange = function(){
 
-			$.ajax({
-				url         : 'http://localhost:1428/api/message/all',
-				type        : 'GET',
-				ContentType : 'application/json'
-			}).done(function(response){
-				response.forEach(function(message) {
-					for (let i = 0; i < users.length; i++) {
-						var userName;
-						if (users[i].alias == message.sender) {
-							userName = users[i].name;
+				if (this.readyState == 4) {
+					chat.innerHTML = '';
+					let messages = JSON.parse(request.responseText);
+					messages.forEach(function(message) {
+						for (let i = 0; i < users.length; i++) {
+							var userName;
+							if (users[i].alias == message.sender) {
+								userName = users[i].name;
+							}
 						}
-					}
-					if(getAlias(message.text) == user.alias){
-						chat.append(
-							`<div class="message to-you">
-								<div class="row">
-									<div class="message__name left">${userName} (@${message.sender})</div>
-									<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
-								</div>
-								<div class="row message__text">${message.text}</div>
-							</div>`
-						);
-					} else {
-						chat.append(
-							`<div class="message">
-								<div class="row">
-									<div class="message__name left">${userName} (@${message.sender})</div>
-									<div class="message__time right">${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}</div>
-								</div>
-								<div class="row message__text">${message.text}</div>
-							</div>`
-						);
-					}
-				});
-			}).fail(function(jqXHR, textStatus, errorThrown){
-				console.log(`Error: request fail`);
-			});
+						if (getAlias(message.text) == user.alias) {
+							let msg = document.createElement('div');
+							msg.className = 'message to-you';
+							chat.appendChild(msg);
+							let row = document.createElement('div');
+							row.className = 'row';
+							msg.appendChild(row);
+							let name = document.createElement('div');
+							name.className = 'message__name left';
+							name.innerHTML = `${userName} (@${message.sender})`;
+							row.appendChild(name);
+							let time = document.createElement('div');
+							time.className = 'message__time right';
+							time.innerHTML = `${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}`;
+							row.appendChild(time);
+							let text = document.createElement('div');
+							text.className = 'row message__text';
+							text.innerHTML = `${message.text}`;
+							msg.appendChild(text);
+						} else {
+							let msg = document.createElement('div');
+							msg.className = 'message';
+							chat.appendChild(msg);
+							let row = document.createElement('div');
+							row.className = 'row';
+							msg.appendChild(row);
+							let name = document.createElement('div');
+							name.className = 'message__name left';
+							name.innerHTML = `${userName} (@${message.sender})`;
+							row.appendChild(name);
+							let time = document.createElement('div');
+							time.className = 'message__time right';
+							time.innerHTML = `${new Date(message.id).getHours()}: ${new Date(message.id).getMinutes()}`;
+							row.appendChild(time);
+							let text = document.createElement('div');
+							text.className = 'row message__text';
+							text.innerHTML = `${message.text}`;
+							msg.appendChild(text);
+						}
+					});
+				}
+			}
 		}
 
 	}
 
+	// Sorry about that :(
 	setInterval(function(){
 		getUsers();
+	}, 1000)
+
+	setInterval(function() {
 		getHistory();
-	}, 2000)
+	}, 1100);
 
 })()
