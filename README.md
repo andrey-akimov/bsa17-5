@@ -1,4 +1,5 @@
-#A simple chat with jQuery.
+A simple chat with jQuery.
+===================
 
 1. npm i
 
