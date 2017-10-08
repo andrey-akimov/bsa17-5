@@ -15,4 +15,6 @@ app.use(function(req, res, next) {
 
 const routes = require('./routes/api/routes')(app);
 
-const server = app.listen(1428);
+const server = app.listen(1428, () => {
+    console.log('Server start at port 1428');
+});
